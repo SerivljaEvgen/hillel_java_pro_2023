@@ -1,4 +1,4 @@
-package main.java.homework.task_1_project_creation;
+package homework.task_1_project_creation;
 
 public class Main {
     public static void main(String[] args) {
