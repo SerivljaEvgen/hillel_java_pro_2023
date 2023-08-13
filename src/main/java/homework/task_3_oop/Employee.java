@@ -15,19 +15,30 @@ public class Employee {
         this.age = age;
     }
 
-    @Override
-    public String toString() {
-        return "Employee: \n" +
-                "fullName: '" + fullName + '\'' +
-                ", position: '" + position + '\'' +
-                ", email: '" + email + '\'' +
-                ", phone: '" + phone + '\'' +
-                ", age: " + age;
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public int getAge() {
+        return age;
     }
 
     public static void main(String[] args) {
         Employee employee = new Employee("John Smith", "manager", "J.Smith@gmail.com",
                 "+38 050-605-43-45", 35);
-        System.out.println(employee);
+        System.out.println("Employee information: \n" + employee.getFullName() + "\n" + employee.getPosition() + "\n" +
+                employee.getEmail() + "\n" + employee.getPhone() + "\n" + employee.getAge());
     }
 }
