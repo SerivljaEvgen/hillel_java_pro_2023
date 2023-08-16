@@ -1,6 +1,6 @@
 package homework.task_4_inheritance;
 
-public abstract class Animal {
+public class Animal {
 
     private static int count; // comment for myself:
     // static defines a static variable that is associated with the class itself and not with a specific class object.
