@@ -2,7 +2,7 @@ package homework.task_8_exceptions;
 
 public class ArrayValueCalculator {
 
-     int doCalc(String[][] arr) throws ArraySizeException, ArrayDataException {
+    int doCalc(String[][] arr) throws ArraySizeException, ArrayDataException {
 
         int sum = 0;
         for (int i = 0; i < arr.length; i++) {
@@ -14,7 +14,7 @@ public class ArrayValueCalculator {
                     int value = Integer.parseInt(arr[i][j]);
                     sum += value;
                 } catch (Exception e) {
-                    throw new ArrayDataException("ArrayDataException [" + i + "][" + j + "]");
+                    throw new ArrayDataException("ArrayDataException [" + i + "][" + j + "]", e);
                 }
             }
         }
