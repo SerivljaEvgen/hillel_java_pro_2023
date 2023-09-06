@@ -27,17 +27,11 @@ public class Box<T extends Fruit> {
         return totalWeight;
     }
 
-    //                         Вопросы !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // Работает, но не понимаю ставить Box<?> или Box<T>, или Box<? extends Fruit> и почему?
-    public boolean compare(Box<?> anotherBox) {
-        //  Если они имеют почти одинаковый вес (с учетом дробной части), метод вернет true, иначе – false
+    public boolean compare(Box<? extends Fruit> anotherBox) {
+        //  Если коробки имеют почти одинаковый вес (с учетом дробной части), метод вернет true, иначе – false
         return Math.abs(this.getWeight() - anotherBox.getWeight()) < 0.0001;
     }
 
-    // Сделал с помощью chatGPT и все равно appleBox2.merge(orangeBox1) в Main не компилируется - не понимаю как сделать,
-    // чтобы срабатывал блок else;
-    // Также не понимаю ставить Box<?> или Box<T> или Box<? extends Fruit> или... и почему?
-    // Подскажите пожалуйста.
     public void merge(Box<T> anotherBox) {
         if (this == anotherBox) {
             System.out.println("Unable to merge box with itself");

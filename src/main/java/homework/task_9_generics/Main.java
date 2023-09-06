@@ -27,8 +27,8 @@ public class Main {
         System.out.println("Weight of appleBox2: " + appleBox2.getWeight());
 
         System.out.println("Trying to combine a box of oranges and apples:");
-//       appleBox2.merge(orangeBox1);
-//       не дает скомпилировать данную строку - не понимаю как изменить код, чтобы сработал кейс else
+//       appleBox2.merge(orangeBox1); - Compile Error
+
 
     }
 }
