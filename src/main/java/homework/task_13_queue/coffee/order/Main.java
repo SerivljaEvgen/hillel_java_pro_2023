@@ -24,14 +24,15 @@ public class Main {
         System.out.println("-----------------");
 
         //2 - deliver
-        orderBoard.deliver();
+        System.out.println(orderBoard.deliver());
         System.out.println("\"Coffee Orders\" after deliver");
         // 4 - draw
         orderBoard.draw();
         System.out.println("-----------------");
 
         //3 - deliver with specific order
-        orderBoard.deliver(order3);
+        System.out.println(orderBoard.deliver(3));
+        orderBoard.deliver(10);
         System.out.println("\"Coffee Orders\" after deliver specific order");
         // 4 - draw
         orderBoard.draw();

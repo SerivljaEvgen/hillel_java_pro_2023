@@ -14,18 +14,22 @@ public class CoffeeOrderBoard {
     }
 
     //2
-    public void deliver() {
-        System.out.println("The closest in the order queue: \n" +
-                queueOrderList.poll());
+    public Order deliver() {
+        System.out.println("The closest in the order queue: ");
+        return queueOrderList.poll();
     }
 
     //3
-    public void deliver(Order deliverOrder) {
-        List<Order> listOrderList = new ArrayList<>(queueOrderList);
-        System.out.println("Delivered specific order: " + deliverOrder.getOrderNum());
-        listOrderList.remove(deliverOrder);
-        queueOrderList.clear();
-        queueOrderList.addAll(listOrderList);
+    public Order deliver(int orderNum) {
+        System.out.println("Delivered specific order: ");
+        for (Order order : queueOrderList) {
+            if (order.getOrderNum() == orderNum) {
+                queueOrderList.remove(order);
+                return order;
+            }
+        }
+        System.out.println("specific order: " + orderNum + " not found");
+        return null;
     }
 
     //4
