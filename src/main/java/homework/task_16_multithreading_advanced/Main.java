@@ -1,34 +1,39 @@
 package homework.task_16_multithreading_advanced;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Main {
     public static void main(String[] args) {
+        int maxRequests = 4;
+        PetrolStation petrolStation = new PetrolStation(100, maxRequests);
 
-        PetrolStation petrolStation = new PetrolStation(100);
 
-        Thread car1 = new Thread(()-> petrolStation.doRefuel(30));
+        ExecutorService executor = Executors.newFixedThreadPool(maxRequests); // Створюємо пул потоків з розміром 4.
 
-        Thread car2 = new Thread(()-> petrolStation.doRefuel(20));
+        // Використовуємо ExecutorService для запуску потоків замість створення окремих потоків.
+        executor.submit(() -> petrolStation.doRefuel(30));
+        executor.submit(() -> petrolStation.doRefuel(20));
+        executor.submit(() -> petrolStation.doRefuel(15));
+        executor.submit(() -> petrolStation.doRefuel(10));
 
-        Thread car3 = new Thread(()-> petrolStation.doRefuel(10));
+        // Зупиняємо ExecutorService.
+        executor.shutdown();
 
-        car1.start();
-        car2.start();
-        car3.start();
+        // Очікуємо завершення всіх потоків у пулі.
+        while (!executor.isTerminated()) { //Цей метод перевіряє, чи всі завдання, запущені в пулі потоків,
+            // вже завершили своє виконання. Він повертає true, якщо всі завдання в пулі були виконані та пул був
+            // коректно закритий, і false в іншому випадку.
+            Thread.yield(); //Цей метод вказує поточному потоку уступити процесор і дати можливість іншим потокам
+            // виконати деякі операції. В даному випадку він викликається в циклі, який очікує завершення всіх потоків.
+            //Використовуючи Thread.yield(), ми намагаємося зменшити навантаження на процесор, дозволяючи іншим потокам виконати роботу.
 
-        // Очікуємо завершення всіх потоків.
-        //очікуємо, поки всі 3 потоки (car1, car2, car3) завершать запити на заправку до станції,
-        // перед тим як перейти до наступних дій. Це забезпечує правильний порядок виводу і відображення результатів роботи програми.
-        // Якщо не використовувати join, то головний потік може продовжити виконувати інструкції, навіть якщо інші потоки
-        // ще не завершили роботу, і це може призвести до некоректних результатів або виведення інформації в неправильному порядку.
-        try {
-            car1.join();
-            car2.join();
-            car3.join();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
-        System.out.println("Remaining fuel on the station: " + petrolStation.getAmount() + " liters.");
+        //    Цикл while (!executor.isTerminated()) буде виконуватися до тих пір, поки executor.isTerminated() не поверне true. Тобто, цей цикл продовжується, доки всі завдання в пулі не завершать виконання.
+        //
+        //Отже, дана конструкція очікує завершення всіх потоків, які були запущені з використанням ExecutorService, і
+        // це дозволяє головному потоку продовжити свою роботу тільки після того, як всі інші потоки завершать свою роботу.
 
+        System.out.println("Remaining fuel on the station: " + petrolStation.getAmount() + " liters.");
     }
 }

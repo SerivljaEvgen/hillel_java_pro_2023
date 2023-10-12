@@ -1,49 +1,52 @@
 package homework.task_16_multithreading_advanced;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class PetrolStation {
 
-    private int amount; //кількість пального на станції.
-    private ThreadSafeList<Integer> refuelRequest = new ThreadSafeList<>();
+    private final AtomicInteger amount; //представляє кількість пального на станції і атомарно оновлюється в різних потоках.
+    private final int maxConcurrentRefuels = 3; //максимальна кількість одночасних запитів на заправку.
+    private AtomicInteger[] refuelRequests; //це масив AtomicInteger, де зберігаються запити на заправку. Величина масиву обмежена maxConcurrentRefuels.
+    private int requestIndex;
 
-    public PetrolStation(int amount) {
-        this.amount = amount;
+    //Конструктор PetrolStation приймає початкову кількість пального і максимальну кількість запитів на заправку та ініціалізує відповідні поля об'єкта.
+    public PetrolStation(int initialAmount, int maxRequests) {
+        this.amount = new AtomicInteger(initialAmount);
+        this.refuelRequests = new AtomicInteger[maxRequests];
+        this.requestIndex = 0;
     }
 
-    public void doRefuel (int fuelAmount){
-        //Перевіряється, чи передана кількість пального більше нуля, і якщо так, то запит додається до черги refuelRequests.
-        if(fuelAmount > 0) {
-            //додаємо запит на заправку в чергу
-            refuelRequest.add(fuelAmount);
-            //Якщо поточний запит є першим у черзі (серед всіх одночасних запитів), то розпочинається операція заправки
-            if(refuelRequest.get() == fuelAmount) {
-                // Only the first request will attempt to refuel
-                // Генерується випадковий час заправки від 3 до 10 секунд, щоб симулювати тривалість заправки.
+    //Метод doRefuel приймає кількість пального, яку автомобіль хоче заправити. Якщо запит на заправку дійсний
+    // (кількість пального більше 0), і є місце для ще одного одночасного запиту (якщо requestIndex менше maxConcurrentRefuels), то:
+    //    Створюється новий об'єкт AtomicInteger у refuelRequests з вказаною кількістю пального.
+    //    Записується індекс поточного запиту в currentIndex і збільшується requestIndex.
+    //    Генерується випадковий час заправки (від 3 до 10 секунд) і потік "засинає" на цей час, симулюючи заправку.
+    //    Після закінчення заправки перевіряється, чи на станції є достатньо пального для заправки refuelRequests[currentIndex].get(). Якщо так, то кількість пального в станції атомарно зменшується на цю кількість, і виводиться повідомлення про успішну заправку. Якщо недостатньо пального, виводиться повідомлення про відсутність пального.
+    public void doRefuel(int fuelAmount) {
+        if (fuelAmount > 0) {
+            if (requestIndex < maxConcurrentRefuels) {
+                refuelRequests[requestIndex] = new AtomicInteger(fuelAmount);
+                int currentIndex = requestIndex;
+                requestIndex++;
+
                 int timeToRefuel = 3 + (int) (Math.random() * 8);
                 try {
-                    //Засинаємо потік (використовуючи Thread.sleep) для симуляції тривалості заправки.
                     Thread.sleep(timeToRefuel * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                // Після закінчення заправки видаляємо запит з черги.
-                refuelRequest.remove();
-                //Використовуємо synchronized блок для захисту від багатопоточного доступу до amount (кількість пального на станції).
-                synchronized (this) {
-                    //Якщо на станції достатньо пального для заправки, відбувається віднімання кількості пального на станції
-                    // та виведення повідомлення про успішну заправку. У іншому випадку виводиться повідомлення про недостатність пального.
-                    if (amount >= fuelAmount) {
-                        amount -= fuelAmount;
-                        System.out.println("Successfully refueled " + fuelAmount + " liters.");
-                    } else {
-                        System.out.println("Not enough fuel in the station.");
-                    }
+                if (amount.get() >= refuelRequests[currentIndex].get()) {
+                    amount.addAndGet(-refuelRequests[currentIndex].get());
+                    System.out.println("Successfully refueled " + refuelRequests[currentIndex].get() + " liters.");
+                } else {
+                    System.out.println("Not enough fuel in the station.");
                 }
             }
         }
     }
 
     public int getAmount() {
-        return amount;
+        return amount.get();
     }
 }
